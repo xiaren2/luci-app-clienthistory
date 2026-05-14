@@ -5,13 +5,13 @@
 'require ui';
 
 const callGetHistory = rpc.declare({
-	object: 'luci.wifihistory',
+	object: 'luci.clienthistory',
 	method: 'getHistory',
 	expect: { history: {} }
 });
 
 const callClearHistory = rpc.declare({
-	object: 'luci.wifihistory',
+	object: 'luci.clienthistory',
 	method: 'clearHistory',
 	expect: { result: true }
 });
