@@ -1,10 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2026-04-04 05:43+0000\n"
-"Last-Translator: konno_he <h3114931694@gmail.com>\n"
-"Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
-"projects/openwrt/luciapplicationswifihistory/zh_Hans/>\n"
+"PO-Revision-Date: 2026-05-14 22:00+0000\n"
+"Last-Translator: YOU <you@example.com>\n"
+"Language-Team: Chinese (Simplified Han script)\n"
 "Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,104 +11,78 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 5.17-dev\n"
 
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:120
-msgid "Cancel"
-msgstr "取消"
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "Client History"
+msgstr "客户端历史记录"
 
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:131
-msgid "Clear"
-msgstr "清除"
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "Displays WiFi and Ethernet client history."
+msgstr "显示 WiFi 和有线客户端的连接历史记录。"
 
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:150
-msgid "Clear History"
-msgstr "清除历史"
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "All"
+msgstr "全部"
 
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:114
-msgid "Clear Station History"
-msgstr "清除客户端历史记录"
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "WiFi"
+msgstr "无线"
 
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:96
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:155
-msgid "Connected"
-msgstr "已连接"
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "Ethernet"
+msgstr "有线"
 
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:96
-msgid "Disconnected"
-msgstr "已断开"
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "Type"
+msgstr "类型"
 
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:160
-msgid "First seen"
-msgstr "首次连接时间"
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "IP"
+msgstr "IP 地址"
 
-#: applications/luci-app-wifihistory/root/usr/share/rpcd/acl.d/luci-app-wifihistory.json:3
-msgid "Grant access to WiFi station history"
-msgstr "授予 WiFi 客户端历史记录的权限"
-
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:157
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
 msgid "Host"
 msgstr "主机"
 
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:161
-msgid "Last seen"
-msgstr "最后一次连接时间"
-
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:156
-msgid "MAC address"
-msgstr "MAC 地址"
-
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:158
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
 msgid "Network"
 msgstr "网络"
 
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:99
-msgid "No"
-msgstr "否"
-
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:110
-msgid "No station history available"
-msgstr "无客户端连接历史记录"
-
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:63
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:159
-msgid "Noise"
-msgstr "噪声"
-
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:64
-msgid "SNR"
-msgstr "信噪比"
-
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:62
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:68
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:159
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
 msgid "Signal"
 msgstr "信号强度"
 
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:140
-#: applications/luci-app-wifihistory/root/usr/share/luci/menu.d/luci-app-wifihistory.json:3
-msgid "Station History"
-msgstr "WiFi 客户端历史记录"
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "Connected"
+msgstr "已连接"
 
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:142
-msgid ""
-"This page displays a history of all WiFi stations that have connected to "
-"this device, including currently connected and previously seen devices."
-msgstr ""
-"本页面展示所有连接过本设备的 WiFi 客户端历史记录，包括正在连接和曾经连接过的"
-"客户端。"
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "Disconnected"
+msgstr "已断开"
 
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:115
-msgid ""
-"This will permanently delete all recorded station history. Are you sure?"
-msgstr "即将永久删除所有客户端连接历史记录。确定吗？"
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "First seen"
+msgstr "首次连接时间"
 
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:99
-msgid "Yes"
-msgstr "是"
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "Last seen"
+msgstr "最后连接时间"
 
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:60
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:62
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:63
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:67
-#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:68
-msgid "dBm"
-msgstr "dBm"
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "Clear History"
+msgstr "清除历史"
+
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "Cancel"
+msgstr "取消"
+
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "Clear"
+msgstr "清除"
+
+#: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
+msgid "This will permanently delete all recorded station history. Are you sure?"
+msgstr "此操作将永久删除所有客户端历史记录，是否继续？"
+
+#: applications/luci-app-wifihistory/root/usr/share/rpcd/acl.d/luci-app-wifihistory.json:3
+msgid "Grant access to WiFi station history"
+msgstr "允许查看客户端历史记录"
