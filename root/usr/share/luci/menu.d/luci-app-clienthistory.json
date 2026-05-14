@@ -1,0 +1,14 @@
+{
+	"admin/status/clienthistory": {
+			"title": "Client History",
+		"order": 8,
+		"action": {
+			"type": "view",
+			"path": "status/clienthistory"
+		},
+		"depends": {
+			"acl": [ "luci-app-clienthistory" ],
+			"uci": { "wireless": { "@wifi-device": true } }
+		}
+	}
+}
