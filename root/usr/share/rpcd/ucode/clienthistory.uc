@@ -4,7 +4,7 @@
 
 import { readfile, writefile } from 'fs';
 
-const HISTORY_FILE = '/var/lib/wifihistory/history.json';
+const HISTORY_FILE = '/var/lib/clienthistory/history.json';
 
 const methods = {
 	getHistory: {
@@ -30,4 +30,4 @@ const methods = {
 	}
 };
 
-return { 'luci.wifihistory': methods };
+return { 'luci.clienthistory': methods };
