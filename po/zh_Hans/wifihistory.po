@@ -17,7 +17,7 @@ msgstr "客户端历史记录"
 
 #: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
 msgid "Displays WiFi and Ethernet client history."
-msgstr "显示 WiFi 和有线客户端的连接历史记录。"
+msgstr "显示 WiFi 和有线客户端的连接历史记录，无ipv4时判定为离线。"
 
 #: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
 msgid "All"
