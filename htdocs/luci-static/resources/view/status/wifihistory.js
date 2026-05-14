@@ -45,11 +45,20 @@ return view.extend({
 		const rows = [];
 
 		for (const s of stations) {
-			let hint =
-				s.hostname && s.ipv4 ? `${s.hostname} (${s.ipv4})` :
-				s.hostname ? s.hostname :
-				s.ipv4 ? s.ipv4 :
-				'-';
+
+			/* ✅ 主机名 */
+			let host = s.hostname || '-';
+
+			/* ✅ IPv4 / IPv6 合并 */
+			let ip = '';
+			if (s.ipv4 && s.ipv6)
+				ip = '%s / %s'.format(s.ipv4, s.ipv6);
+			else if (s.ipv4)
+				ip = s.ipv4;
+			else if (s.ipv6)
+				ip = s.ipv6;
+			else
+				ip = '-';
 
 			let icon =
 				s.type === 'ethernet'
@@ -58,10 +67,9 @@ return view.extend({
 
 			let signal =
 				s.type === 'wifi' && s.signal
-					? `${s.signal} dBm`
+					? '%d dBm'.format(s.signal)
 					: '-';
 
-			/* ✅ 有线显示真实接口名 */
 			let network =
 				s.type === 'ethernet'
 					? s.ifname || 'LAN'
@@ -83,7 +91,8 @@ return view.extend({
 				]),
 
 				s.mac,
-				hint,
+				host,
+				ip,
 				network,
 				signal,
 				formatDate(s.first_seen),
@@ -151,6 +160,7 @@ return view.extend({
 					E('th', {}, _('Connected')),
 					E('th', {}, _('MAC')),
 					E('th', {}, _('Host')),
+					E('th', {}, _('IP')),
 					E('th', {}, _('Network')),
 					E('th', {}, _('Signal')),
 					E('th', {}, _('First Seen')),
