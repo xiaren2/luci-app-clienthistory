@@ -12,10 +12,6 @@ PKG_LICENSE:=Apache-2.0
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
-# ============================================================
-# Install
-# ============================================================
-
 define Package/luci-app-clienthistory/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./etc/init.d/clienthistory $(1)/etc/init.d/clienthistory
@@ -30,10 +26,6 @@ define Package/luci-app-clienthistory/install
 	$(CP) ./po $(1)/
 endef
 
-# ============================================================
-# Post-install：确保权限 + 自启
-# ============================================================
-
 define Package/luci-app-clienthistory/postinst
 #!/bin/sh
 [ -f /etc/init.d/clienthistory ] && {
@@ -42,9 +34,5 @@ define Package/luci-app-clienthistory/postinst
 	/etc/init.d/clienthistory restart
 }
 endef
-
-# ============================================================
-# Build package
-# ============================================================
 
 $(eval $(call BuildPackage,luci-app-clienthistory))
