@@ -1,0 +1,92 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"PO-Revision-Date: 2026-05-14 22:00+0000\n"
+"Last-Translator: YOU <you@example.com>\n"
+"Language-Team: Chinese (Simplified Han script)\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.17-dev\n"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "Client History"
+msgstr "客户端历史记录"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "Displays WiFi and Ethernet client history."
+msgstr "显示 WiFi 和有线客户端的连接历史记录，无ipv4时判定为离线。"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "All"
+msgstr "全部"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "WiFi"
+msgstr "无线"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "Ethernet"
+msgstr "有线"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "Type"
+msgstr "类型"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "IP"
+msgstr "IP 地址"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "Host"
+msgstr "主机"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "Network"
+msgstr "网络"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "Signal"
+msgstr "信号强度"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "Connected"
+msgstr "已连接"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "Disconnected"
+msgstr "已断开"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "First Seen"
+msgstr "首次连接时间"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "Last Seen"
+msgstr "最后连接时间"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "Clear History"
+msgstr "清除历史"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "Cancel"
+msgstr "取消"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "Clear"
+msgstr "清除"
+
+#: applications/luci-app-clienthistory/htdocs/luci-static/resources/view/status/clienthistory.js:xxx
+msgid "This will permanently delete all recorded station history. Are you sure?"
+msgstr "此操作将永久删除所有客户端历史记录，是否继续？"
+
+#: applications/luci-app-clienthistory/root/usr/share/rpcd/acl.d/luci-app-clienthistory.json:3
+msgid "Grant access to WiFi station history"
+msgstr "允许查看客户端历史记录"
+
+#: applications/luci-app-clienthistory/root/usr/share/rpcd/acl.d/luci-app-clienthistory.json:3
+msgid "No client history available"
+msgstr "没有客户端历史记录，请稍等"
