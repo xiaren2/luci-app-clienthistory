@@ -4,12 +4,12 @@ START=99
 STOP=10
 USE_PROCD=1
 
-NAME=wifihistory
-PROG=/usr/sbin/wifihistory
+NAME=clienthistory
+PROG=/usr/sbin/clienthistory
 INTERVAL=30
 
 start_service() {
-	mkdir -p /var/lib/wifihistory
+	mkdir -p /var/lib/clienthistory
 
 	procd_open_instance "$NAME"
 	procd_set_param command /bin/sh -c "while true; do /usr/bin/ucode $PROG; sleep $INTERVAL; done"
