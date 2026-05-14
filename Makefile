@@ -8,6 +8,6 @@ PKG_LICENSE:=Apache-2.0
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
-LUCI_INIT_SCRIPTS := wifihistory
+LUCI_INIT_SCRIPTS := clienthistory
 
 # call BuildPackage - OpenWrt buildroot signature
