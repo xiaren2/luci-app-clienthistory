@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-wifihistory
+PKG_NAME:=luci-app-clienthistory
 PKG_VERSION:=1.0
 PKG_RELEASE:=1
 
@@ -16,12 +16,12 @@ include $(TOPDIR)/feeds/luci/luci.mk
 # Install
 # ============================================================
 
-define Package/luci-app-wifihistory/install
+define Package/luci-app-clienthistory/install
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/etc/init.d/wifihistory $(1)/etc/init.d/wifihistory
+	$(INSTALL_BIN) ./files/etc/init.d/clienthistory $(1)/etc/init.d/clienthistory
 
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) ./files/usr/sbin/wifihistory $(1)/usr/sbin/wifihistory
+	$(INSTALL_BIN) ./files/usr/sbin/clienthistory $(1)/usr/sbin/clienthistory
 
 	$(CP) ./htdocs $(1)/
 	$(CP) ./ucode $(1)/
@@ -34,12 +34,12 @@ endef
 # Post-install：确保权限 + 自启
 # ============================================================
 
-define Package/luci-app-wifihistory/postinst
+define Package/luci-app-clienthistory/postinst
 #!/bin/sh
-[ -f /etc/init.d/wifihistory ] && {
-	chmod 755 /etc/init.d/wifihistory
-	/etc/init.d/wifihistory enable
-	/etc/init.d/wifihistory restart
+[ -f /etc/init.d/clienthistory ] && {
+	chmod 755 /etc/init.d/clienthistory
+	/etc/init.d/clienthistory enable
+	/etc/init.d/clienthistory restart
 }
 endef
 
@@ -47,4 +47,4 @@ endef
 # Build package
 # ============================================================
 
-$(eval $(call BuildPackage,luci-app-wifihistory))
+$(eval $(call BuildPackage,luci-app-clienthistory))
