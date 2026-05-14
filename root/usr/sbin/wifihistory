@@ -25,7 +25,6 @@ function load_history() {
 
 function save_history(data) {
 	let tmp = HISTORY_FILE + '.tmp';
-
 	writefile(tmp, sprintf('%J', data));
 	rename(tmp, HISTORY_FILE);
 }
@@ -82,8 +81,6 @@ function poll_stations() {
 	let now = time();
 
 	let history = load_history();
-	let seen_macs = {};
-
 	let hints = ubus.call('luci-rpc', 'getHostHints') || {};
 
 	/*
@@ -126,8 +123,6 @@ function poll_stations() {
 
 					mac = uc(mac);
 
-					seen_macs[mac] = true;
-
 					let hostname = hints?.[mac]?.name || '';
 					let ipv4 = hints?.[mac]?.ipaddrs?.[0] || '';
 					let ipv6 = hints?.[mac]?.ip6addrs?.[0] || '';
@@ -160,7 +155,8 @@ function poll_stations() {
 	let neigh = get_ip_neigh();
 
 	for (let mac in neigh) {
-		if (seen_macs[mac])
+		/* ✅ 关键：绝不覆盖 WiFi */
+		if (history[mac]?.type == 'wifi')
 			continue;
 
 		let n = neigh[mac];
@@ -171,7 +167,6 @@ function poll_stations() {
 		/*
 		 * 跳过 WAN
 		 */
-
 		if (n.ifname == 'eth0' ||
 		    n.ifname == 'wan')
 			continue;
@@ -194,17 +189,14 @@ function poll_stations() {
 			first_seen: existing?.first_seen || now,
 			last_seen: now
 		};
-
-		seen_macs[mac] = true;
 	}
 
 	/*
-	 * OFFLINE CLIENTS
+	 * ✅ 统一在线判断：有 IPv4 才算在线
 	 */
-
 	for (let mac in history) {
-		if (!seen_macs[mac])
-			history[mac].connected = false;
+		let e = history[mac];
+		e.connected = !!(e.ipv4 && e.ipv4 != '');
 	}
 
 	ubus.disconnect();
