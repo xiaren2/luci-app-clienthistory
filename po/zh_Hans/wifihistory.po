@@ -60,11 +60,11 @@ msgid "Disconnected"
 msgstr "已断开"
 
 #: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
-msgid "First seen"
+msgid "First Seen"
 msgstr "首次连接时间"
 
 #: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
-msgid "Last seen"
+msgid "Last Seen"
 msgstr "最后连接时间"
 
 #: applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js:xxx
