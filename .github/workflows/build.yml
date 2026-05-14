@@ -1,4 +1,4 @@
-name: Build luci-app-clienthistory Multi-Arch 
+name: Build luci-app-wifihistory Multi-Arch 
 
 on:
   workflow_dispatch:
@@ -20,7 +20,7 @@ jobs:
             sdk_url: "https://downloads.openwrt.org/releases/23.05.0/targets/mediatek/filogic/openwrt-sdk-23.05.0-mediatek-filogic_gcc-12.3.0_musl.Linux-x86_64.tar.xz"
             extract_cmd: "tar -xJf"
 
-    name: Build luci-app-clienthistory (${{ matrix.name }})
+    name: Build luci-app-wifihistory (${{ matrix.name }})
 
     steps:
       - name: Checkout repository
@@ -45,7 +45,7 @@ jobs:
 
       - name: Prepare package
         run: |
-          mkdir -p openwrt-sdk/package/luci-app-clienthistory
+          mkdir -p openwrt-sdk/package/luci-app-wifihistory
           rsync -av --delete \
             --exclude 'openwrt-sdk' \
             --exclude '.git' \
@@ -53,7 +53,7 @@ jobs:
             --exclude '.github/workflows' \
             --exclude '*.tar.*' \
             --exclude 'sdk-archive' \
-            ./ openwrt-sdk/package/luci-app-clienthistory/
+            ./ openwrt-sdk/package/luci-app-wifihistory/
 
       - name: Build package
         working-directory: openwrt-sdk
@@ -61,7 +61,7 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
           make defconfig
-          make package/luci-app-clienthistory/compile V=s || true
+          make package/luci-app-wifihistory/compile V=s || true
 
       - name: Copy packages to staging
         shell: bash
@@ -69,10 +69,10 @@ jobs:
           shopt -s globstar
           mkdir -p packages-staging/${{ matrix.name }}
           find openwrt-sdk/bin/packages -type f \( \
-              -name "luci-app-clienthistory*.ipk" -o \
-              -name "luci-i18n-clienthistory*.ipk" -o\
-              -name "luci-app-clienthistory*.apk" -o \
-              -name "luci-i18n-clienthistory*.apk" \
+              -name "luci-app-wifihistory*.ipk" -o \
+              -name "luci-i18n-wifihistory*.ipk" -o\
+              -name "luci-app-wifihistory*.apk" -o \
+              -name "luci-i18n-wifihistory*.apk" \
             \) -exec cp -v {} packages-staging/${{ matrix.name }}/ \;
 
       - name: Upload packages
