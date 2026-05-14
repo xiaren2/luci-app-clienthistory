@@ -5,9 +5,9 @@
 import { readfile, writefile, open, mkdir, rename, popen } from 'fs';
 import { connect } from 'ubus';
 
-const HISTORY_DIR = '/var/lib/wifihistory';
+const HISTORY_DIR = '/var/lib/clienthistory';
 const HISTORY_FILE = HISTORY_DIR + '/history.json';
-const LOCK_FILE = '/var/lock/wifihistory.lock';
+const LOCK_FILE = '/var/lock/clienthistory.lock';
 
 function load_history() {
 	let content = readfile(HISTORY_FILE);
