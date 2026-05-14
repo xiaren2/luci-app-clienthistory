@@ -19,11 +19,13 @@ const callClearHistory = rpc.declare({
 function formatDate(epoch) {
 	if (!epoch || epoch <= 0)
 		return '-';
-
 	return new Date(epoch * 1000).toLocaleString();
 }
 
 return view.extend({
+
+	currentFilter: 'all',
+
 	load() {
 		return callGetHistory();
 	},
@@ -31,13 +33,9 @@ return view.extend({
 	updateTable(table, history) {
 		let stations = Object.values(history);
 
-		/* 过滤类型 */
-		if (this.filterType === 'wifi')
-			stations = stations.filter(s => s.type !== 'wired');
-		else if (this.filterType === 'wired')
-			stations = stations.filter(s => s.type === 'wired');
+		if (this.currentFilter !== 'all')
+			stations = stations.filter(s => s.type === this.currentFilter);
 
-		/* 排序 */
 		stations.sort((a, b) => {
 			if (a.connected !== b.connected)
 				return a.connected ? -1 : 1;
@@ -47,84 +45,72 @@ return view.extend({
 		const rows = [];
 
 		for (const s of stations) {
-			let hint;
-			if (s.hostname && (s.ipv4 || s.ipv6))
-				hint = '%s (%s)'.format(s.hostname, s.ipv4 || s.ipv6);
-			else if (s.ipv4 || s.ipv6)
-				hint = s.ipv4 || s.ipv6;
-			else
-				hint = '-';
+			let hint =
+				s.hostname && s.ipv4 ? `${s.hostname} (${s.ipv4})` :
+				s.hostname ? s.hostname :
+				s.ipv4 ? s.ipv4 :
+				'-';
 
-			let sig_value = '-';
-			let sig_title = '';
+			let icon =
+				s.type === 'ethernet'
+					? L.resource('icons/ethernet.svg')
+					: L.resource('icons/signal-075-100.svg');
 
-			if (s.type !== 'wired' && s.signal && s.signal !== 0) {
-				if (s.noise && s.noise !== 0) {
-					sig_value = '%d/%d\xa0%s'.format(s.signal, s.noise, _('dBm'));
-					sig_title = '%s: %d %s / %s: %d %s / %s %d'.format(
-						_('Signal'), s.signal, _('dBm'),
-						_('Noise'), s.noise, _('dBm'),
-						_('SNR'), s.signal - s.noise);
-				} else {
-					sig_value = '%d\xa0%s'.format(s.signal, _('dBm'));
-					sig_title = '%s: %d %s'.format(_('Signal'), s.signal, _('dBm'));
-				}
-			}
+			let signal =
+				s.type === 'wifi' && s.signal
+					? `${s.signal} dBm`
+					: '-';
 
-			let icon;
-			if (s.type === 'wired') {
-				icon = L.resource('icons/ethernet.svg');
-			} else if (!s.connected) {
-				icon = L.resource('icons/signal-none.svg');
-			} else {
-				const q = Math.min((s.signal + 110) / 70 * 100, 100);
-				if (q == 0)
-					icon = L.resource('icons/signal-000-000.svg');
-				else if (q < 25)
-					icon = L.resource('icons/signal-000-025.svg');
-				else if (q < 50)
-					icon = L.resource('icons/signal-025-050.svg');
-				else if (q < 75)
-					icon = L.resource('icons/signal-050-075.svg');
-				else
-					icon = L.resource('icons/signal-075-100.svg');
-			}
+			/* ✅ 有线显示真实接口名 */
+			let network =
+				s.type === 'ethernet'
+					? s.ifname || 'LAN'
+					: s.network || '-';
 
 			rows.push([
+				E('span', {}, [
+					E('img', {
+						src: icon,
+						style: 'width:16px;height:16px'
+					})
+				]),
+
 				E('span', {
 					'class': 'ifacebadge',
-					'style': s.connected ? '' : 'opacity:0.5',
-					'title': s.connected ? _('Connected') : _('Disconnected')
+					'style': s.connected ? '' : 'opacity:0.5'
 				}, [
-					E('img', { 'src': icon, 'style': 'width:16px;height:16px' }),
-					E('span', {}, [ ' ', s.connected ? _('Yes') : _('No') ])
+					s.connected ? _('Yes') : _('No')
 				]),
+
 				s.mac,
 				hint,
-				s.network || '-',
-				E('span', { 'title': sig_title }, sig_value),
+				network,
+				signal,
 				formatDate(s.first_seen),
 				formatDate(s.last_seen)
 			]);
 		}
 
-		cbi_update_table(table, rows, E('em', _('No station history available')));
+		cbi_update_table(
+			table,
+			rows,
+			E('em', _('No client history available'))
+		);
 	},
 
 	handleClearHistory() {
-		return ui.showModal(_('Clear Station History'), [
-			E('p', _('This will permanently delete all recorded station history. Are you sure?')),
+		return ui.showModal(_('Clear History'), [
+			E('p', _('This will permanently delete all recorded client history.')),
 			E('div', { 'class': 'right' }, [
-				E('button', { class: 'btn', click: ui.hideModal }, _('Cancel')),
+				E('button', { 'class': 'btn', 'click': ui.hideModal }, _('Cancel')),
 				' ',
 				E('button', {
-					class: 'btn cbi-button-negative',
-					click: ui.createHandlerFn(this, function () {
+					'class': 'btn cbi-button-negative',
+					'click': ui.createHandlerFn(this, () => {
 						return callClearHistory().then(() => {
 							ui.hideModal();
-							return callGetHistory().then(history => {
-								this.history = history;
-								this.updateTable('#wifi_history_table', history);
+							return callGetHistory().then(h => {
+								this.updateTable('#wifi_history_table', h);
 							});
 						});
 					})
@@ -133,62 +119,54 @@ return view.extend({
 		]);
 	},
 
+	setFilter(filter) {
+		this.currentFilter = filter;
+		return callGetHistory().then(h => {
+			this.updateTable('#wifi_history_table', h);
+		});
+	},
+
 	render(history) {
-		this.history = history;
-		this.filterType = 'all';
-
 		const v = E([], [
-			E('h2', _('Station History')),
-			E('div', { class: 'cbi-map-descr' },
-				_('This page displays a history of all clients connected to this device.')),
+			E('h2', _('Client History')),
+			E('div', { 'class': 'cbi-map-descr' },
+				_('Displays WiFi and Ethernet client history.')),
 
-			E('div', { class: 'cbi-section' }, [
-				E('div', { class: 'right', style: 'margin-bottom:1em' }, [
-					E('select', {
-						id: 'filter_type',
-						change: ui.createHandlerFn(this, function (ev) {
-							this.filterType = ev.target.value;
-							this.updateTable('#wifi_history_table', this.history);
-						})
-					}, [
-						E('option', { value: 'all' }, _('All')),
-						E('option', { value: 'wifi' }, _('WiFi')),
-						E('option', { value: 'wired' }, _('Wired'))
-					]),
-					' ',
-					E('button', {
-						class: 'btn cbi-button-negative',
-						click: ui.createHandlerFn(this, 'handleClearHistory')
-					}, _('Clear History'))
-				]),
+			E('div', { 'style': 'margin-bottom:10px' }, [
+				E('button', { 'class': 'btn', 'click': () => this.setFilter('all') }, _('All')),
+				' ',
+				E('button', { 'class': 'btn', 'click': () => this.setFilter('wifi') }, _('WiFi')),
+				' ',
+				E('button', { 'class': 'btn', 'click': () => this.setFilter('ethernet') }, _('Ethernet')),
+				' ',
+				E('button', {
+					'class': 'btn cbi-button-negative',
+					'click': ui.createHandlerFn(this, 'handleClearHistory')
+				}, _('Clear History'))
+			]),
 
-				E('table', { class: 'table', id: 'wifi_history_table' }, [
-					E('tr', { class: 'tr table-titles' }, [
-						E('th', _('Connected')),
-						E('th', _('MAC address')),
-						E('th', _('Host')),
-						E('th', _('Network')),
-						E('th', '%s / %s'.format(_('Signal'), _('Noise'))),
-						E('th', _('First seen')),
-						E('th', _('Last seen'))
-					])
+			E('table', { 'class': 'table', 'id': 'wifi_history_table' }, [
+				E('tr', { 'class': 'tr table-titles' }, [
+					E('th', {}, _('Type')),
+					E('th', {}, _('Connected')),
+					E('th', {}, _('MAC')),
+					E('th', {}, _('Host')),
+					E('th', {}, _('Network')),
+					E('th', {}, _('Signal')),
+					E('th', {}, _('First Seen')),
+					E('th', {}, _('Last Seen'))
 				])
 			])
 		]);
 
-		this.updateTable(v.querySelector('#wifi_history_table'), history);
+		this.updateTable('#wifi_history_table', history);
 
 		poll.add(() => {
-			return callGetHistory().then(history => {
-				this.history = history;
-				this.updateTable('#wifi_history_table', history);
+			return callGetHistory().then(h => {
+				this.updateTable('#wifi_history_table', h);
 			});
 		}, 5);
 
 		return v;
-	},
-
-	handleSaveApply: null,
-	handleSave: null,
-	handleReset: null
+	}
 });
