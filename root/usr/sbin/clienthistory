@@ -2,20 +2,25 @@
 
 'use strict';
 
-import {
-	readfile, writefile, open, mkdir, rename
-} from 'fs';
+import { readfile, writefile, open, mkdir, rename, popen } from 'fs';
 import { connect } from 'ubus';
 
-const HISTORY_DIR  = '/var/lib/clienthistory';
+const HISTORY_DIR = '/var/lib/clienthistory';
 const HISTORY_FILE = HISTORY_DIR + '/history.json';
-const LOCK_FILE    = '/var/lock/clienthistory.lock';
-const INTERVAL     = 30;
+const LOCK_FILE = '/var/lock/clienthistory.lock';
 
 function load_history() {
-	let f = readfile(HISTORY_FILE);
-	if (!f) return {};
-	try { return json(f) || {}; } catch { return {}; }
+	let content = readfile(HISTORY_FILE);
+
+	if (content == null)
+		return {};
+
+	try {
+		return json(content) || {};
+	}
+	catch (e) {
+		return {};
+	}
 }
 
 function save_history(data) {
@@ -25,103 +30,196 @@ function save_history(data) {
 }
 
 function get_ip_neigh() {
-	let r = {};
-	let fd = open('/proc/net/arp');
-	if (!fd) return r;
+	let result = {};
+	let fd = popen('ip neigh');
+
+	if (!fd)
+		return result;
 
 	while (true) {
-		let l = fd.read('line');
-		if (!l) break;
+		let line = fd.read('line');
 
-		let p = split(l, /\s+/);
-		if (length(p) < 6) continue;
+		if (!line)
+			break;
 
-		let ip = p[0];
-		let mac = lc(p[3]);
-		let dev = p[5];
+		line = trim(line);
 
-		if (mac == '00:00:00:00:00:00') continue;
+		let m = match(line,
+			/^([0-9a-fA-F\:\.]+)\s+dev\s+(\S+).*lladdr\s+([0-9a-fA-F\:]+)\s+/);
 
-		if (!r[mac]) r[mac] = {};
-		r[mac].ifname = dev;
+		if (!m)
+			continue;
+
+		let ip = m[1];
+		let dev = m[2];
+		let mac = uc(m[3]);
+
+		if (!result[mac])
+			result[mac] = {};
+
 		if (index(ip, ':') >= 0)
-			r[mac].ipv6 = ip;
+			result[mac].ipv6 = ip;
 		else
-			r[mac].ipv4 = ip;
+			result[mac].ipv4 = ip;
+
+		result[mac].ifname = dev;
 	}
+
 	fd.close();
-	return r;
+
+	return result;
 }
 
 function poll_stations() {
 	let ubus = connect();
-	if (!ubus) return;
+
+	if (!ubus) {
+		warn('Failed to connect to ubus\n');
+		return;
+	}
 
 	let now = time();
-	let hints = ubus.call('luci-rpc', 'getHostHints') || {};
+
 	let history = load_history();
+	let hints = ubus.call('luci-rpc', 'getHostHints') || {};
 
-	/* WiFi */
-	let ws = ubus.call('network.wireless', 'status') || {};
-	for (let radio in ws) {
-		for (let iface in ws[radio]?.interfaces || {}) {
-			let ifname = iface?.ifname;
-			if (!ifname) continue;
+	/*
+	 * WIFI CLIENTS
+	 */
 
-			let assoc = ubus.call('iwinfo', 'assoclist', { device: ifname }) || {};
-			for (let sta in assoc.results || {}) {
-				let mac = lc(sta.mac);
-				if (!mac) continue;
+	let wifi_status = ubus.call('network.wireless', 'status');
 
-				history[mac] = {
-					mac,
-					type: 'wifi',
-					hostname: hints?.[mac]?.name || '',
-					ipv4: hints?.[mac]?.ipaddrs?.[0] || '',
-					ipv6: hints?.[mac]?.ip6addrs?.[0] || '',
-					network: ubus.call('iwinfo', 'info', { device: ifname })?.ssid || ifname,
-					ifname,
-					connected: true,
-					signal: sta.signal || 0,
-					first_seen: history[mac]?.first_seen || now,
-					last_seen: now
-				};
+	if (wifi_status) {
+		for (let radio in wifi_status) {
+			let ifaces = wifi_status[radio]?.interfaces;
+
+			if (!ifaces)
+				continue;
+
+			for (let iface in ifaces) {
+				let ifname = iface?.ifname;
+
+				if (!ifname)
+					continue;
+
+				let info = ubus.call('iwinfo', 'info', {
+					device: ifname
+				});
+
+				let ssid = info?.ssid || '';
+
+				let assoc = ubus.call('iwinfo', 'assoclist', {
+					device: ifname
+				});
+
+				if (!assoc?.results)
+					continue;
+
+				for (let bss in assoc.results) {
+					let mac = bss?.mac;
+
+					if (!mac)
+						continue;
+
+					mac = uc(mac);
+
+					let hostname = hints?.[mac]?.name || '';
+					let ipv4 = hints?.[mac]?.ipaddrs?.[0] || '';
+					let ipv6 = hints?.[mac]?.ip6addrs?.[0] || '';
+
+					let existing = history[mac];
+
+					history[mac] = {
+						mac: mac,
+						type: 'wifi',
+						hostname: hostname,
+						ipv4: ipv4,
+						ipv6: ipv6,
+						network: ssid,
+						ifname: ifname,
+						connected: true,
+						signal: bss?.signal || 0,
+						noise: bss?.noise || 0,
+						first_seen: existing?.first_seen || now,
+						last_seen: now
+					};
+				}
 			}
 		}
 	}
 
-	/* Ethernet */
+	/*
+	 * ETHERNET CLIENTS
+	 */
+
 	let neigh = get_ip_neigh();
+
 	for (let mac in neigh) {
-		if (history[mac]?.type == 'wifi') continue;
-		if (neigh[mac].ifname == 'eth0' || neigh[mac].ifname == 'wan') continue;
+		/* ✅ 关键：绝不覆盖 WiFi */
+		if (history[mac]?.type == 'wifi')
+			continue;
+
+		let n = neigh[mac];
+
+		if (!n.ifname)
+			continue;
+
+		/*
+		 * 跳过 WAN
+		 */
+		if (n.ifname == 'eth0' ||
+		    n.ifname == 'wan')
+			continue;
+
+		let hostname = hints?.[mac]?.name || '';
+
+		let existing = history[mac];
 
 		history[mac] = {
-			mac,
+			mac: mac,
 			type: 'ethernet',
-			hostname: hints?.[mac]?.name || '',
-			ipv4: neigh[mac].ipv4 || '',
-			ipv6: neigh[mac].ipv6 || '',
+			hostname: hostname,
+			ipv4: n?.ipv4 || '',
+			ipv6: n?.ipv6 || '',
 			network: 'LAN',
-			ifname: neigh[mac].ifname,
-			connected: !!(neigh[mac].ipv4),
+			ifname: n.ifname,
+			connected: true,
 			signal: 0,
-			first_seen: history[mac]?.first_seen || now,
+			noise: 0,
+			first_seen: existing?.first_seen || now,
 			last_seen: now
 		};
 	}
 
-	save_history(history);
+	/*
+	 * ✅ 统一在线判断：有 IPv4 才算在线
+	 */
+	for (let mac in history) {
+		let e = history[mac];
+		e.connected = !!(e.ipv4 && e.ipv4 != '');
+	}
+
 	ubus.disconnect();
+
+	save_history(history);
 }
 
 mkdir(HISTORY_DIR);
-while (true) {
-	let lock = open(LOCK_FILE, 'w');
-	if (lock && lock.lock('xn')) {
-		poll_stations();
-		lock.lock('u');
-	}
-	lock?.close();
-	sleep(INTERVAL);
+
+let lock_fd = open(LOCK_FILE, 'w');
+
+if (!lock_fd) {
+	warn('Failed to open lock file\n');
+	exit(1);
 }
+
+if (!lock_fd.lock('xn')) {
+	warn('Another instance is already running\n');
+	lock_fd.close();
+	exit(1);
+}
+
+poll_stations();
+
+lock_fd.lock('u');
+lock_fd.close();
